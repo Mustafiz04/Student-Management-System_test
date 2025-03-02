@@ -107,8 +107,8 @@ const findStudentToUpdate = async (paylaod) => {
         WHERE id = $4;
     `;
     const queryParams = [name, email, currentDate, id];
-    const { rows } = await processDBRequest({ query, queryParams });
-    return rows;
+    const { rowCount } = await processDBRequest({ query, queryParams });
+    return rowCount;
 }
 
 module.exports = {

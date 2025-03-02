@@ -1,5 +1,5 @@
 const { ApiError, sendAccountVerificationEmail } = require("../../utils");
-const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent } = require("./students-repository");
+const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent, findStudentToUpdate } = require("./students-repository");
 const { findUserById } = require("../../shared/repository");
 
 const checkStudentId = async (id) => {
@@ -50,12 +50,14 @@ const addNewStudent = async (payload) => {
 }
 
 const updateStudent = async (payload) => {
-    const result = await addOrUpdateStudent(payload);
-    if (!result.status) {
-        throw new ApiError(500, result.message);
+    const result = await findStudentToUpdate(payload);
+    
+    // Check if database update affected any rows
+    if (result.rowCount <= 0) {
+        throw new ApiError(404, "Student not found or no changes made");
     }
 
-    return { message: result.message };
+    return { message: "Student updated successfully" };
 }
 
 const setStudentStatus = async ({ userId, reviewerId, status }) => {
